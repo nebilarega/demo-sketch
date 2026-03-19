@@ -12,7 +12,7 @@ import {
     SphereGeometry,
     Group
 } from "three";
-import {ObjectElevation} from "../../constants/Types";
+import {HIGHLIGHTED_COLOR, ObjectElevation} from "../../constants/Types";
 import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
 import {createFloorCeilingEmptyLabel} from "../../components/Labels";
 import {DrawerMath} from "../../components/DrawerMath";
@@ -31,18 +31,27 @@ export class AreaMeasurement implements ISceneObject {
         opacity: 0.3,
         side: DoubleSide
     });
+    private static readonly HIGHLIGHTED_FILL_MATERIAL = new MeshBasicMaterial({
+        color: HIGHLIGHTED_COLOR,
+        transparent: true,
+        opacity: 0.5,
+        side: DoubleSide
+    });
     private static readonly POINT_MATERIAL = new MeshBasicMaterial({
         color: 0x0044ff,
     });
 
     public points: Array<Vector3> = [];
-    private outline: Line;
-    private fill: Mesh;
-    private label: CSS2DObject;
-    private pointsGroup: Group;
+    public readonly id: string;
+    private readonly outline: Line;
+    private readonly fill: Mesh;
+    private readonly label: CSS2DObject;
+    private readonly pointsGroup: Group;
     private scene: Scene | null = null;
+    private areaValue: number = 0;
 
     public constructor() {
+        this.id = Math.random().toString(36).substr(2, 9);
         this.outline = new Line(new BufferGeometry(), AreaMeasurement.LINE_MATERIAL);
         this.fill = new Mesh(new BufferGeometry(), AreaMeasurement.FILL_MATERIAL);
         this.fill.rotation.x = Math.PI / 2;
@@ -52,6 +61,10 @@ export class AreaMeasurement implements ISceneObject {
 
         this.label = new CSS2DObject(createFloorCeilingEmptyLabel());
         this.label.element.style.pointerEvents = 'none';
+    }
+
+    public getArea(): number {
+        return this.areaValue;
     }
 
     public updatePoints(newPoints: Array<Vector3>) {
@@ -102,7 +115,7 @@ export class AreaMeasurement implements ISceneObject {
     }
 
     private updateLabel() {
-        const area = DrawerMath.calculatePolygonArea(this.points);
+        this.areaValue = DrawerMath.calculatePolygonArea(this.points);
         const centroid = new Vector3(0, ObjectElevation.UI, 0);
         this.points.forEach(p => {
             centroid.x += p.x;
@@ -112,7 +125,7 @@ export class AreaMeasurement implements ISceneObject {
         centroid.z /= this.points.length;
 
         this.label.position.copy(centroid);
-        this.label.element.textContent = "Area: " + (area / 10).toFixed(2) + " m2";
+        this.label.element.textContent = "Area: " + (this.areaValue / 10).toFixed(2) + " m2";
         this.label.element.className = "planner-label area-measurement-label";
     }
 
@@ -140,8 +153,14 @@ export class AreaMeasurement implements ISceneObject {
         }
     }
 
-    public highlight(): void {}
-    public unHighlight(): void {}
+    public highlight(): void {
+        this.fill.material = AreaMeasurement.HIGHLIGHTED_FILL_MATERIAL;
+    }
+
+    public unHighlight(): void {
+        this.fill.material = AreaMeasurement.FILL_MATERIAL;
+    }
+
     public addLabel(): void { this.outline.add(this.label); }
     public removeLabel(): void { this.outline.remove(this.label); }
 }

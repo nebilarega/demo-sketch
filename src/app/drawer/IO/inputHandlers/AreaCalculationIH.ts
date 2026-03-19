@@ -8,9 +8,11 @@ export class AreaCalculationIH implements IInputHandler {
     private measurement: AreaMeasurement;
     private points: Array<Vector3> = [];
     private isDrawing: boolean = false;
+    private readonly onAreaAdded: (area: AreaMeasurement) => void;
 
-    public constructor(scene: Scene) {
+    public constructor(scene: Scene, onAreaAdded: (area: AreaMeasurement) => void) {
         this.scene = scene;
+        this.onAreaAdded = onAreaAdded;
         this.measurement = new AreaMeasurement();
     }
 
@@ -33,9 +35,22 @@ export class AreaCalculationIH implements IInputHandler {
         this.measurement.updatePoints(this.points);
     }
 
+    public finish(): void {
+        if (this.isDrawing && this.points.length >= 3) {
+            this.onAreaAdded(this.measurement);
+            // Prepare for next one
+            this.measurement = new AreaMeasurement();
+            this.points = [];
+            this.isDrawing = false;
+        } else if (this.isDrawing) {
+            this.handleCancel();
+        }
+    }
+
     public handleCancel(): void {
         this.isDrawing = false;
         this.points = [];
         this.measurement.removeFrom(this.scene);
+        this.measurement = new AreaMeasurement();
     }
 }

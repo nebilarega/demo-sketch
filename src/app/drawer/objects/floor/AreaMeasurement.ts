@@ -125,7 +125,7 @@ export class AreaMeasurement implements ISceneObject {
         centroid.z /= this.points.length;
 
         this.label.position.copy(centroid);
-        this.label.element.textContent = "Area: " + (this.areaValue / 10).toFixed(2) + " m2";
+        this.label.element.textContent = "Area: " + (this.areaValue / 100).toFixed(2) + " m2";
         this.label.element.className = "planner-label area-measurement-label";
     }
 

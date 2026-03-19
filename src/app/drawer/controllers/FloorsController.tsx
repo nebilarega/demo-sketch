@@ -102,7 +102,7 @@ export const FloorsController: React.FC<FactorySubcomponentProps> = ({ goBack })
                         onMouseLeave={() => area.unHighlight()}
                         style={{ cursor: 'pointer', padding: '5px 10px', fontSize: '12px' }}
                     >
-                        Area {index + 1}: {(area.getArea() / 10).toFixed(2)} m2
+                        Area {index + 1}: {(area.getArea() / 100).toFixed(2)} m2
                     </ListGroup.Item>
                 ))}
             </ListGroup>

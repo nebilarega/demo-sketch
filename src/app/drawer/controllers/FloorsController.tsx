@@ -7,10 +7,12 @@ import {PRIMARY_VARIANT, SECONDARY_VARIANT, SELECTED_VARIANT} from "../../arrang
 import {IInputHandler} from "../../common/canvas/inputHandler/IInputHandler";
 import {VoidIH} from "../../common/canvas/inputHandler/VoidIH";
 import {RemoveObjectIH} from "../IO/inputHandlers/RemoveObjectIH";
+import {AreaCalculationIH} from "../IO/inputHandlers/AreaCalculationIH";
 
 enum Menu {
     ADD = "Add floor along with ceiling",
     DELETE = "Remove floor along with ceiling",
+    CALCULATE_AREA = "Calculate area",
 }
 
 export const FloorsController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
@@ -38,10 +40,13 @@ export const FloorsController: React.FC<FactorySubcomponentProps> = ({ goBack })
             case Menu.DELETE:
                 setInputHandler(new RemoveObjectIH(context.floorsRemover));
                 break;
+            case Menu.CALCULATE_AREA:
+                setInputHandler(new AreaCalculationIH(context.scene));
+                break;
             default:
                 setInputHandler(new VoidIH());
         }
-    }, [menu, context.floorsDrawer]);
+    }, [menu, context.floorsDrawer, context.floorsRemover, context.scene]);
 
     useEffect(() => {
         context.mainInputHandler.changeHandlingStrategy(inputHandler);
@@ -52,7 +57,7 @@ export const FloorsController: React.FC<FactorySubcomponentProps> = ({ goBack })
         context.mainInputHandler.detachCurrentHandler();
     }, [inputHandler, context.mainInputHandler]);
 
-    const cancelButton = menu !== Menu.ADD ? null :
+    const cancelButton = (menu !== Menu.ADD && menu !== Menu.CALCULATE_AREA) ? null :
         <Button onClick={handleCancel} variant={PRIMARY_VARIANT} className="side-by-side-child btn-sm">
             Cancel
         </Button>;
@@ -79,6 +84,7 @@ const OperationSelection: React.FC<OperationSelectionProps> = ({ currentMenu, se
 
     const addVariant = currentMenu === Menu.ADD ? SELECTED_VARIANT : SECONDARY_VARIANT;
     const deleteVariant = currentMenu === Menu.DELETE ? SELECTED_VARIANT : SECONDARY_VARIANT;
+    const calculateVariant = currentMenu === Menu.CALCULATE_AREA ? SELECTED_VARIANT : SECONDARY_VARIANT;
 
     return (
         <div className="side-by-side-parent">
@@ -87,6 +93,9 @@ const OperationSelection: React.FC<OperationSelectionProps> = ({ currentMenu, se
             </Button>
             <Button onClick={() => setMenu(Menu.DELETE)} variant={deleteVariant} className="side-by-side-child btn-sm">
                 {Menu.DELETE}
+            </Button>
+            <Button onClick={() => setMenu(Menu.CALCULATE_AREA)} variant={calculateVariant} className="side-by-side-child btn-sm">
+                {Menu.CALCULATE_AREA}
             </Button>
         </div>
     );

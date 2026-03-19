@@ -17,3 +17,20 @@
   background-color: #DDDDDD;
   flex-grow: 1;
 }
+
+.planner-label {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid #666;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 12px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.area-measurement-label {
+  background-color: rgba(0, 136, 255, 0.9);
+  color: white;
+  border: none;
+  font-weight: bold;
+}

@@ -41,6 +41,74 @@ export class DrawerMath {
         );
     }
 
+    /**
+     * Calculates area of polygon using shoelace formula.
+     * @param points
+     */
+    public static calculatePolygonArea(points: Array<Vector3>): number {
+        let area = 0;
+        for (let i = 0; i < points.length; i++) {
+            const j = (i + 1) % points.length;
+            area += points[i].x * points[j].z;
+            area -= points[j].x * points[i].z;
+        }
+        return Math.abs(area) / 2;
+    }
+
+    /**
+     * Finds cycles in the graph of walls.
+     * @param walls
+     */
+    public static findCycles(walls: Array<{start: Vector3, end: Vector3}>): Array<Array<Vector3>> {
+        const adj = new Map<string, Set<string>>();
+        const posMap = new Map<string, Vector3>();
+
+        const serialize = (v: Vector3) => `${Math.round(v.x * 100) / 100},${Math.round(v.z * 100) / 100}`;
+
+        walls.forEach(w => {
+            const u = serialize(w.start);
+            const v = serialize(w.end);
+            if (!adj.has(u)) adj.set(u, new Set());
+            if (!adj.has(v)) adj.set(v, new Set());
+            adj.get(u)!.add(v);
+            adj.get(v)!.add(u);
+            posMap.set(u, w.start);
+            posMap.set(v, w.end);
+        });
+
+        const cycles: Array<Array<Vector3>> = [];
+        const visited = new Set<string>();
+
+        const findCyclesRecursive = (u: string, p: string, path: string[]) => {
+            visited.add(u);
+            path.push(u);
+
+            const neighbors = adj.get(u);
+            if (neighbors) {
+                for (const v of neighbors) {
+                    if (v === p) continue;
+                    if (path.includes(v)) {
+                        // Cycle found
+                        const cyclePath = path.slice(path.indexOf(v));
+                        if (cyclePath.length >= 3) {
+                            cycles.push(cyclePath.map(node => posMap.get(node)!));
+                        }
+                    } else if (!visited.has(v)) {
+                        findCyclesRecursive(v, u, [...path]);
+                    }
+                }
+            }
+        };
+
+        for (const node of adj.keys()) {
+            if (!visited.has(node)) {
+                findCyclesRecursive(node, "", []);
+            }
+        }
+
+        return cycles;
+    }
+
     public static calculateDirection(start: Vector3, end: Vector3): Vector2D {
         if (Math.abs(end.x - start.x) > Math.abs(end.z - start.z)) {
 

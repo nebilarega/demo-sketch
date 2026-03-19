@@ -56,6 +56,7 @@ type FloorPlanContextType = {
     wallComponentRemover: WallComponentRemover,
     floorsRemover: FloorsRemover,
     wallHeight: number,
+    scene: Scene,
 }
 
 export const FloorPlanContext = createContext<FloorPlanContextType | undefined>(undefined);
@@ -128,6 +129,7 @@ export const FloorPlanMainController: React.FC<Props> = ({
         wallComponentRemover,
         floorsRemover,
         wallHeight,
+        scene,
     };
 
     const controllerNameDiv = currentControllerName === "" ? null : <div className="center-div-horizontally">{currentControllerName}</div>;

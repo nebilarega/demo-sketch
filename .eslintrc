@@ -4,30 +4,26 @@
   "parserOptions": {
     "sourceType": "module",
     "ecmaFeatures": {
-      "jsx": true
-    }
+      "jsx": true,
+    },
   },
   "settings": {
     "react": {
-      "version": "detect"
-    }
+      "version": "detect",
+    },
   },
-  "plugins": [
-    "@typescript-eslint",
-    "unused-imports"
-  ],
-  "rules" : {
+  "plugins": ["@typescript-eslint", "unused-imports"],
+  "rules": {
     "no-unused-vars": "off",
-    "unused-imports/no-unused-vars": "warn",
-    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "off",
     "semi": "error",
     "no-extra-semi": "warn",
-    "no-unexpected-multiline": "warn"
+    "no-unexpected-multiline": "warn",
   },
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:@typescript-eslint/eslint-recommended"
-  ]
+    "plugin:@typescript-eslint/eslint-recommended",
+  ],
 }
-

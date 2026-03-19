@@ -52,9 +52,7 @@
     "npm": "8.5.0"
   },
   "scripts": {
-    "prestart": "npm run readme",
     "start": "react-scripts start",
-    "prebuild": "npm run readme",
     "build": "react-scripts build",
     "test": "jest --maxWorkers=1",
     "eslint": "eslint . --ext .ts --ext .tsx --ext .js",
